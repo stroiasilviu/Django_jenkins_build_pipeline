@@ -5,7 +5,7 @@ pipeline {
         stage('Checkout') {
             steps {
                 // Checking-out the code from the repo.
-                Checkout scm
+                // Checkout scm
                 sleep 10
             }
         }
