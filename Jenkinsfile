@@ -10,7 +10,7 @@ pipeline {
                         branches: [[name: '*/dev']],
                         userRemoteConfigs: [[
                             url: 'https://github.com/stroiasilviu/Django_jenkins_build_pipeline.git',
-                            credentialsId: 'stroiasilviu'
+                            credentialsId: 'd634d552d44db18c63fe88dc8d110643d5cd2278672c7ef314dce9adbd8f8602'
                         ]]
                     ])
                 }
