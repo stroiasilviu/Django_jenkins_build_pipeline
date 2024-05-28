@@ -4,9 +4,16 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                // Checking-out the code from the repo.
-                // Checkout scm
-                sleep 10
+                script {
+                    checkout([
+                        $class: 'GitSCM',
+                        branches: [[name: '*/dev']],
+                        userRemoteConfigs: [[
+                            url: 'https://github.com/stroiasilviu/Django_jenkins_build_pipeline.git',
+                            credentialsId: 'stroiasilviu'
+                        ]]
+                    ])
+                }
             }
         }
 
@@ -27,7 +34,7 @@ pipeline {
     stage('Run Tests') {
         steps {
             // Run Django tests
-            sh 'python3 manage.py test'
+            sh 'python3 manage.py tests'
         }
     }
 
