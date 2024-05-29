@@ -6,38 +6,52 @@ pipeline {
     }
 
     stages {
-    //     stage('Checkout') {
-    //         steps {
-    //             script {
-    //                 // Print environment variables to debug
-    //                 sh 'env'
+        stage('Checkout') {
+            steps {
+                script {
+                    def projectDir = "${env.WORKSPACE}/Django_jenkins_build_pipeline"
                     
-    //                 // Manually remove any existing directory to ensure a clean state
-    //                 sh 'rm -rf /home/silviu/Django_jenkins_build_pipeline || true'
+                    // Print environment variables to debug
+                    sh 'env'
                     
-    //                 // Clone the repository
-    //                 sh 'git clone https://github.com/stroiasilviu/Django_jenkins_build_pipeline.git'
+                    // Ensure directory exists and is writable
+                    sh "mkdir -p ${projectDir}"
+                    sh "chmod -R 755 ${projectDir}"
                     
-    //                 // Change to the project directory
-    //                 dir('/home/silviu/Django_jenkins_build_pipeline') {
-    //                     // Checkout the specific branch
-    //                     sh 'git checkout dev'
+                    // Clean up the directory
+                    sh "rm -rf ${projectDir}/*"
+                    
+                    // Print the current user
+                    sh "whoami"
+                    
+                    // Print the directory contents before cloning
+                    sh "ls -l ${projectDir}"
+                    
+                    // Clone the repository
+                    sh "git clone https://github.com/stroiasilviu/Django_jenkins_build_pipeline.git ${projectDir}"
+                    
+                    // Print the directory contents after cloning
+                    sh "ls -l ${projectDir}"
+                    
+                    // Change to the project directory
+                    dir(projectDir) {
+                        // Checkout the specific branch
+                        sh 'git checkout dev'
                         
-    //                     // Optionally, fetch all branches
-    //                     // sh 'git fetch --all'
-                        
-    //                     // Optionally, pull the latest changes
-    //                     // sh 'git pull origin main'
-    //                 }
-    //             }
-    //         }
-    //     }
+                        // Print the directory contents after checkout
+                        sh "ls -l"
+                    }
+                }
+            }
+        }
 
         stage('Set Up Virtual Environment') {
             steps {
                 script {
-                    // Create virtual environment
-                    sh "python3 -m env ${env.VENV_DIR}"
+                    def projectDir = "${env.WORKSPACE}/Django_jenkins_build_pipeline"
+                    
+                    // Create virtual environment in the project directory
+                    sh "python3 -m venv ${projectDir}/${env.VENV_DIR}"
                 }
             }
         }
@@ -45,10 +59,12 @@ pipeline {
         stage('Install Dependencies') {
             steps {
                 script {
+                    def projectDir = "${env.WORKSPACE}/Django_jenkins_build_pipeline"
+                    
                     // Activate virtual environment and install dependencies
                     sh """
-                        . ${env.VENV_DIR}/bin/activate
-                        pip install -r your-project/requirements.txt
+                        . ${projectDir}/${env.VENV_DIR}/bin/activate
+                        pip install -r ${projectDir}/requirements.txt
                     """
                 }
             }
@@ -57,22 +73,24 @@ pipeline {
         stage('Run Tests') {
             steps {
                 script {
+                    def projectDir = "${env.WORKSPACE}/Django_jenkins_build_pipeline"
+                    
                     // Activate virtual environment and run tests
                     sh """
-                        . ${env.VENV_DIR}/bin/activate
-                        cd /home/silviu/Django_jenkins_build_pipeline
-                        python3 manage.py test
+                        . ${projectDir}/${env.VENV_DIR}/bin/activate
+                        cd ${projectDir}
+                        python manage.py test
                     """
                 }
             }
         }
 
-    stage('Static Code Analysis') {
-        steps {
-            // Run flake8 for linting
-            sh 'flake8 .'
+        stage('Static Code Analysis') {
+            steps {
+                // Run flake8 for linting
+                sh 'flake8 .'
+            }
         }
-    }
 
 stage('Package') {
             steps {
