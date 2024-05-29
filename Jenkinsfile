@@ -37,7 +37,7 @@ pipeline {
             steps {
                 script {
                     // Create virtual environment
-                    sh "python -m venv ${env.VENV_DIR}"
+                    sh "python3 -m env ${env.VENV_DIR}"
                 }
             }
         }
@@ -61,7 +61,7 @@ pipeline {
                     sh """
                         . ${env.VENV_DIR}/bin/activate
                         cd /home/silviu/Django_jenkins_build_pipeline
-                        python manage.py test
+                        python3 manage.py test
                     """
                 }
             }
@@ -77,7 +77,7 @@ pipeline {
 stage('Package') {
             steps {
                 // Package your application (optional)
-                sh 'python setup.py sdist'
+                sh 'python3 setup.py sdist'
             }
         }
 
