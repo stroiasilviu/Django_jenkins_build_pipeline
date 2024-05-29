@@ -13,7 +13,7 @@ pipeline {
                     sh 'env'
                     
                     // Manually remove any existing directory to ensure a clean state
-                    sh 'rm -rf /home/silviu/Django_jenkins_build_pipeline || true'
+                    // sh 'rm -rf /home/silviu/Django_jenkins_build_pipeline || true'
                     
                     // Clone the repository
                     sh 'git clone https://github.com/stroiasilviu/Django_jenkins_build_pipeline.git'
