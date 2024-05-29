@@ -5,7 +5,7 @@ pipeline {
         VENV_DIR = 'env'  // Directory for the virtual environment
     }
 
-    // stages {
+    stages {
     //     stage('Checkout') {
     //         steps {
     //             script {
