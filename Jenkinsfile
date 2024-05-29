@@ -5,33 +5,33 @@ pipeline {
         VENV_DIR = 'env'  // Directory for the virtual environment
     }
 
-    stages {
-        stage('Checkout') {
-            steps {
-                script {
-                    // Print environment variables to debug
-                    sh 'env'
+    // stages {
+    //     stage('Checkout') {
+    //         steps {
+    //             script {
+    //                 // Print environment variables to debug
+    //                 sh 'env'
                     
-                    // Manually remove any existing directory to ensure a clean state
-                     sh 'rm -rf /home/silviu/Django_jenkins_build_pipeline || true'
+    //                 // Manually remove any existing directory to ensure a clean state
+    //                 sh 'rm -rf /home/silviu/Django_jenkins_build_pipeline || true'
                     
-                    // Clone the repository
-                    sh 'git clone https://github.com/stroiasilviu/Django_jenkins_build_pipeline.git'
+    //                 // Clone the repository
+    //                 sh 'git clone https://github.com/stroiasilviu/Django_jenkins_build_pipeline.git'
                     
-                    // Change to the project directory
-                    dir('/home/silviu/Django_jenkins_build_pipeline') {
-                        // Checkout the specific branch
-                        sh 'git checkout dev'
+    //                 // Change to the project directory
+    //                 dir('/home/silviu/Django_jenkins_build_pipeline') {
+    //                     // Checkout the specific branch
+    //                     sh 'git checkout dev'
                         
-                        // Optionally, fetch all branches
-                        // sh 'git fetch --all'
+    //                     // Optionally, fetch all branches
+    //                     // sh 'git fetch --all'
                         
-                        // Optionally, pull the latest changes
-                        // sh 'git pull origin main'
-                    }
-                }
-            }
-        }
+    //                     // Optionally, pull the latest changes
+    //                     // sh 'git pull origin main'
+    //                 }
+    //             }
+    //         }
+    //     }
 
         stage('Set Up Virtual Environment') {
             steps {
