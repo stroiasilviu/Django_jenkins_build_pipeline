@@ -1,42 +1,71 @@
 pipeline {
     agent any
 
+    environment {
+        VENV_DIR = 'env'  // Directory for the virtual environment
+    }
+
     stages {
         stage('Checkout') {
             steps {
                 script {
-                    checkout([
-                        $class: 'GitSCM',
-                        branches: [[name: '*/dev']],
-                        userRemoteConfigs: [[
-                            url: 'https://github.com/stroiasilviu/Django_jenkins_build_pipeline.git',
-                            credentialsId: 'd634d552d44db18c63fe88dc8d110643d5cd2278672c7ef314dce9adbd8f8602'
-                        ]]
-                    ])
+                    // Print environment variables to debug
+                    sh 'env'
+                    
+                    // Manually remove any existing directory to ensure a clean state
+                    sh 'rm -rf /home/silviu/Django_jenkins_build_pipeline || true'
+                    
+                    // Clone the repository
+                    sh 'git clone https://github.com/stroiasilviu/Django_jenkins_build_pipeline.git'
+                    
+                    // Change to the project directory
+                    dir('/home/silviu/Django_jenkins_build_pipeline') {
+                        // Checkout the specific branch
+                        sh 'git checkout dev'
+                        
+                        // Optionally, fetch all branches
+                        // sh 'git fetch --all'
+                        
+                        // Optionally, pull the latest changes
+                        // sh 'git pull origin main'
+                    }
                 }
             }
         }
 
-    stage('Install Dependencies') {
-        steps {
-            // Installing required Python packages
-            sh 'pip install -r requirements.txt'
+        stage('Set Up Virtual Environment') {
+            steps {
+                script {
+                    // Create virtual environment
+                    sh "python -m venv ${env.VENV_DIR}"
+                }
+            }
         }
-    }
 
-    stage('Run Migrations') {
-        steps{
-            // Apply database migrations
-            sh 'python3 manage.py migrate'
+        stage('Install Dependencies') {
+            steps {
+                script {
+                    // Activate virtual environment and install dependencies
+                    sh """
+                        . ${env.VENV_DIR}/bin/activate
+                        pip install -r your-project/requirements.txt
+                    """
+                }
+            }
         }
-    }
-    
-    stage('Run Tests') {
-        steps {
-            // Run Django tests
-            sh 'python3 manage.py tests'
+
+        stage('Run Tests') {
+            steps {
+                script {
+                    // Activate virtual environment and run tests
+                    sh """
+                        . ${env.VENV_DIR}/bin/activate
+                        cd /home/silviu/Django_jenkins_build_pipeline
+                        python manage.py test
+                    """
+                }
+            }
         }
-    }
 
     stage('Static Code Analysis') {
         steps {
