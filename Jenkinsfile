@@ -9,9 +9,7 @@ pipeline {
         stage('Install Dependencies') {
             steps {
                 script {
-                    // Create a virtual environment named 'venv'
-                    // sh 'python3 -m venv venv'
-                    // Activate the virtual environment
+                    // Activate the virtual environment.
                     if (isUnix()) {
                         sh '. /env/bin/activate'
                     } else {
