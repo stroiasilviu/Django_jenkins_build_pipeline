@@ -35,7 +35,7 @@ class Song(models.Model):
 
     title = models.CharField(max_length=128)
     artists = models.ManyToManyField(Artist)
-    playlists = models.ManyToManyField(Playlist, null=True, blank=True)
+    playlists = models.ManyToManyField(Playlist, blank=True) # null=True
     album = models.ForeignKey(Album, on_delete=models.DO_NOTHING, null=True)
     genre = models.ForeignKey(Genre, on_delete=models.DO_NOTHING)
     description = models.TextField()
