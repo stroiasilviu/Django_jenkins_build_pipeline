@@ -13,9 +13,9 @@ pipeline {
                     // sh 'python3 -m venv venv'
                     // Activate the virtual environment
                     if (isUnix()) {
-                        sh 'source venv/bin/activate'
+                        sh './env/bin/activate'
                     } else {
-                        bat 'venv\\Scripts\\activate'
+                        bat 'env\\Scripts\\activate'
                     }
                     // Install dependencies using pip from the virtual environment
                     sh 'pip install -r requirements.txt'
