@@ -6,66 +6,22 @@ pipeline {
     }
 
     stages {
-        stage('Checkout') {
-            steps {
-                script {
-                    def projectDir = "${env.WORKSPACE}/Django_jenkins_build_pipeline"
-                    
-                    // Print environment variables to debug
-                    sh 'env'
-                    
-                    // Ensure directory exists and is writable
-                    sh "mkdir -p ${projectDir}"
-                    sh "chmod -R 755 ${projectDir}"
-                    
-                    // Clean up the directory
-                    sh "rm -rf ${projectDir}/*"
-                    
-                    // Print the current user
-                    sh "whoami"
-                    
-                    // Print the directory contents before cloning
-                    sh "ls -l ${projectDir}"
-                    
-                    // Clone the repository
-                    sh "git clone https://github.com/stroiasilviu/Django_jenkins_build_pipeline.git ${projectDir}"
-                    
-                    // Print the directory contents after cloning
-                    sh "ls -l ${projectDir}"
-                    
-                    // Change to the project directory
-                    dir(projectDir) {
-                        // Checkout the specific branch
-                        sh 'git checkout dev'
-                        
-                        // Print the directory contents after checkout
-                        sh "ls -l"
-                    }
-                }
-            }
-        }
-
-        stage('Set Up Virtual Environment') {
-            steps {
-                script {
-                    def projectDir = "${env.WORKSPACE}/Django_jenkins_build_pipeline"
-                    
-                    // Create virtual environment in the project directory
-                    sh "python3 -m venv ${projectDir}/${env.VENV_DIR}"
-                }
-            }
-        }
-
         stage('Install Dependencies') {
             steps {
                 script {
-                    def projectDir = "${env.WORKSPACE}/Django_jenkins_build_pipeline"
-                    
-                    // Activate virtual environment and install dependencies
-                    sh """
-                        . ${projectDir}/${env.VENV_DIR}/bin/activate
-                        pip install -r ${projectDir}/requirements.txt
-                    """
+                    // Create a virtual environment named 'venv'
+                    // sh 'python3 -m venv venv'
+                    // Install dependencies using pip from the virtual environment
+                    sh 'pip install -r requirements.txt'
+                }
+            }
+        }
+
+        stage('Run Migrations') {
+            steps {
+                script {
+                    // Apply database migrations using the python executable from the virtual environment
+                    sh 'python manage.py migrate'
                 }
             }
         }
@@ -73,49 +29,75 @@ pipeline {
         stage('Run Tests') {
             steps {
                 script {
-                    def projectDir = "${env.WORKSPACE}/Django_jenkins_build_pipeline"
-                    
-                    // Activate virtual environment and run tests
-                    sh """
-                        . ${projectDir}/${env.VENV_DIR}/bin/activate
-                        cd ${projectDir}
-                        python manage.py test
-                    """
+                    // Run Django tests using the python executable from the virtual environment
+                    sh 'python manage.py test'
+                }
+                script {
+                    // Start the Django development server in the background
+                    sh 'nohup manage.py runserver 0.0.0.0:8000 &'
+
+                    // Wait for the server to start
+                    sh 'sleep 10'
+
+                    // Run a smoke test to check if the server is running
+                    sh 'curl -f http://localhost:8000 || exit 1'
+
+                    // Kill the Django development server
+                    sh 'pkill -f runserver'
                 }
             }
         }
 
-        stage('Static Code Analysis') {
+        stage('Static Analysis') {
             steps {
-                // Run flake8 for linting
-                sh 'flake8 .'
+                script {
+                    // Run flake8 for linting using the flake8 executable from the virtual environment
+                    sh './venv/bin/flake8'
+                }
             }
         }
 
-stage('Package') {
+        stage('Build') {
             steps {
-                // Package your application (optional)
-                sh 'python3 setup.py sdist'
-            }
-        }
+                script {
+                    // Package the application
+                    sh '''
+                        # Create a directory for the package
+                        mkdir -p build
 
-        stage('Deploy') {
-            when {
-                branch 'dev' // Deploy only if we are on the dev branch
-            }
-            steps {
-                // Example deploy step
-                sh 'echo "Deploying application..."'
-                // Add your deployment steps here
+                        # Copy necessary files to the build directory
+                        cp -r Django_jenkins_build_pipeline/ manage.py requirements.txt build/
+
+                        # Create an archive of the build directory
+                        tar -czf build.tar.gz -C build .
+                    '''
+                }
+                // Archive the build artifacts
+                archiveArtifacts artifacts: 'build.tar.gz', followSymlinks: false
             }
         }
     }
 
     post {
         always {
-            // Archive the test results and coverage reports
-            junit '**/test-results/*.xml'
-            archiveArtifacts '**/dist/*.tar.gz'
+            // Clean up after build
+            cleanWs()
+        }
+        success {
+            echo 'Build completed successfully!'
+        }
+        failure {
+            echo 'Build failed!'
         }
     }
 }
+
+
+//     post {
+//         always {
+//             // Archive the test results and coverage reports
+//             junit '**/test-results/*.xml'
+//             archiveArtifacts '**/dist/*.tar.gz'
+//         }
+//     }
+// }
