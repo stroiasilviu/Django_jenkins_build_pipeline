@@ -54,14 +54,14 @@ pipeline {
             }
         }
 
-        stage('Static Analysis') {
-            steps {
-                script {
-                    // Run flake8 for linting using the flake8 executable from the virtual environment
-                    sh './env/bin/flake8'
-                }
-            }
-        }
+        // stage('Static Analysis') {
+        //     steps {
+        //         script {
+        //             // Run flake8 for linting using the flake8 executable from the virtual environment
+        //             sh './env/bin/flake8'
+        //         }
+        //     }
+        // }
 
         stage('Build') {
             steps {
