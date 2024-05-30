@@ -12,6 +12,7 @@ pipeline {
                     // Create a virtual environment named 'venv'
                     // sh 'python3 -m venv venv'
                     // Install dependencies using pip from the virtual environment
+                    sh 'source env/bin/activate'
                     sh 'pip install -r requirements.txt'
                 }
             }
@@ -21,7 +22,6 @@ pipeline {
             steps {
                 script {
                     // Apply database migrations using the python executable from the virtual environment
-                    sh 'source env/bin/activate'
                     sh 'python manage.py migrate'
                 }
             }
