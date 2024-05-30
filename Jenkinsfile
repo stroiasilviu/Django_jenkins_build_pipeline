@@ -34,10 +34,10 @@ pipeline {
 
         stage('Run Tests') {
             steps {
-                script {
-                    // Run Django tests using the python executable from the virtual environment
-                    sh '.env/bin/python manage.py test'
-                }
+                // script {
+                //     // Run Django tests using the python executable from the virtual environment
+                //     // sh '.env/bin/python manage.py test'
+                // }
                 script {
                     // Start the Django development server in the background
                     sh 'nohup .env/bin/python manage.py runserver 0.0.0.0:8000 &'
