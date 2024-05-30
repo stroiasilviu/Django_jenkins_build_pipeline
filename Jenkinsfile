@@ -38,7 +38,8 @@ pipeline {
                 // }
                 script {
                     // Start the Django development server in the background
-                    sh './env/bin/python manage.py runserver 0.0.0.0:8000'
+                    sh 'nohup ./venv/bin/python manage.py runserver 0.0.0.0:8000 &'
+                    // sh './env/bin/python manage.py runserver 0.0.0.0:8000'
                     //sh 'nohup python manage.py runserver 0.0.0.0:8000 &'
 
                     // Wait for the server to start
