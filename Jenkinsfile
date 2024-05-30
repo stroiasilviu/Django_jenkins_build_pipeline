@@ -13,7 +13,7 @@ pipeline {
                     // sh 'python3 -m venv venv'
                     // Activate the virtual environment
                     if (isUnix()) {
-                        sh './env/bin/activate'
+                        sh '. /env/bin/activate'
                     } else {
                         bat 'env\\Scripts\\activate'
                     }
@@ -27,7 +27,7 @@ pipeline {
             steps {
                 script {
                     // Apply database migrations using the python executable from the virtual environment
-                    sh './env/bin/python3 manage.py migrate'
+                    sh '. /env/bin/python3 manage.py migrate'
                 }
             }
         }
@@ -40,7 +40,8 @@ pipeline {
                 // }
                 script {
                     // Start the Django development server in the background
-                    sh 'nohup python manage.py runserver 0.0.0.0:8000 &'
+                    sh './env/bin/python manage.py runserver 0.0.0.0:8000'
+                    //sh 'nohup python manage.py runserver 0.0.0.0:8000 &'
 
                     // Wait for the server to start
                     sh 'sleep 10'
