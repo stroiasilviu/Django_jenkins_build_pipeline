@@ -21,6 +21,7 @@ pipeline {
             steps {
                 script {
                     // Apply database migrations using the python executable from the virtual environment
+                    sh 'source env/bin/activate'
                     sh 'python manage.py migrate'
                 }
             }
