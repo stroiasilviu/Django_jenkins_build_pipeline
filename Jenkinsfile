@@ -36,11 +36,11 @@ pipeline {
             steps {
                 script {
                     // Run Django tests using the python executable from the virtual environment
-                    sh 'python manage.py test'
+                    sh '.env/bin/python manage.py test'
                 }
                 script {
                     // Start the Django development server in the background
-                    sh 'nohup manage.py runserver 0.0.0.0:8000 &'
+                    sh 'nohup .env/bin/python manage.py runserver 0.0.0.0:8000 &'
 
                     // Wait for the server to start
                     sh 'sleep 10'
@@ -58,7 +58,7 @@ pipeline {
             steps {
                 script {
                     // Run flake8 for linting using the flake8 executable from the virtual environment
-                    sh './venv/bin/flake8'
+                    sh './env/bin/flake8'
                 }
             }
         }
