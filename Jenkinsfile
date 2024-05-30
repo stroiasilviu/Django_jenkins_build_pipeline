@@ -11,7 +11,7 @@ pipeline {
                 script {
                     // Activate the virtual environment.
                     if (isUnix()) {
-                        sh '. /env/bin/activate'
+                        sh './env/bin/activate'
                     } else {
                         bat 'env\\Scripts\\activate'
                     }
@@ -25,7 +25,7 @@ pipeline {
             steps {
                 script {
                     // Apply database migrations using the python executable from the virtual environment
-                    sh '. /env/bin/python3 manage.py migrate'
+                    sh './env/bin/python3 manage.py migrate'
                 }
             }
         }
