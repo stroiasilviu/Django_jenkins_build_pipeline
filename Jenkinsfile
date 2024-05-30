@@ -79,9 +79,6 @@ pipeline {
                     '''
                 }
                 // Archive the build artifacts
-                // Archive the test results and coverage reports
-                              
-                junit '**/test-results/*.xml'
                 archiveArtifacts artifacts: 'build.tar.gz', followSymlinks: false
             }
         }
