@@ -72,7 +72,7 @@ pipeline {
                         mkdir -p build
 
                         # Copy necessary files to the build directory
-                        cp -r Django_jenkins_build_pipeline/ manage.py requirements.txt build/
+                        cp -r ssm_project/ manage.py requirements.txt build/
 
                         # Create an archive of the build directory
                         tar -czf build.tar.gz -C build .
