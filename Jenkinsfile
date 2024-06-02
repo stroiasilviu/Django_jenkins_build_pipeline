@@ -3,7 +3,13 @@ pipeline {
 
     environment {
         VENV_DIR = 'venv'  // Directory for the virtual environment
-        // somecode here
+        // AWS_REGION = 'eu-west-1' // e.g., us-west-2
+        // AWS_ACCOUNT_ID = '471112656092' // Replace with your AWS account ID
+        // IMAGE_TAG = '1.0.0'
+        // ECR_REPOSITORY = 'your-ecr-repository-name' // Replace with your ECR repository name
+        // DOCKER_IMAGE = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPOSITORY}:${IMAGE_TAG}"
+        // EC2_INSTANCE_IP = 'your-ec2-instance-ip' // Replace with your EC2 instance IP
+        // SSH_KEY_PATH = '/path/to/your/private/key' // Replace with the path to your SSH private key
     }
 
     stages {
@@ -87,6 +93,63 @@ pipeline {
                 archiveArtifacts artifacts: 'build.tar.gz', followSymlinks: false
             }
         }
+    
+        stage('Clean-up containers') {
+            steps {
+                script {
+                    sh '''
+                        if docker container ls -a | grep app ;
+                        then
+                            docker container stop app
+                            docker container rm app
+                        fi
+                    '''
+                }
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    sh 'docker build -t django_image:${IMAGE_TAG} .'
+                }
+            }
+        }
+        
+        // stage('Publish Docker Image to EC2') {
+        //     steps {
+        //         script {
+        //             sh '''
+        //                 # Save Docker image to a tar file
+        //                 docker save -o django_image.tar django_image:${IMAGE_TAG}
+                        
+        //                 # Transfer the tar file to the EC2 instance
+        //                 scp -i ${SSH_KEY_PATH} django_image.tar ec2-user@${EC2_INSTANCE_IP}:/home/ec2-user/
+
+        //                 # SSH into the EC2 instance and load the Docker image
+        //                 ssh -i ${SSH_KEY_PATH} ec2-user@${EC2_INSTANCE_IP} << EOF
+        //                 docker load -i /home/ec2-user/django_image.tar
+        //                 EOF
+        //             '''
+        //         }
+        //     }
+        // }
+
+        // stage('Deploy to AWS EC2') {
+        //     steps {
+        //         script {
+        //             sh '''
+        //                 ssh -i ${SSH_KEY_PATH} ec2-user@${EC2_INSTANCE_IP} << EOF
+        //                 docker stop app || true
+        //                 docker rm app || true
+        //                 docker run -d -p 4000:80 --name app appimg:${IMAGE_TAG}
+        //                 EOF
+        //             '''
+        //             sleep 10
+        //             sh 'curl -k http://${EC2_INSTANCE_IP}:4000'
+        //         }
+        //     }
+        // }
     }
 
     post {
