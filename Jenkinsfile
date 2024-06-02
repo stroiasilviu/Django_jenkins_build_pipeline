@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         VENV_DIR = 'venv'  // Directory for the virtual environment
-        // somecode
+        // somecode here
     }
 
     stages {
