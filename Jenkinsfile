@@ -135,7 +135,7 @@ pipeline {
                     sleep 10
                     sh 'docker ps -a' // List all containers for debugging purposes
                     sh 'docker logs app' // Check logs of the running container for debugging
-                    sh 'curl -f http://localhost:4000 || exit 1
+                    sh 'curl -f http://localhost:4000 || exit 1'
                 }
             }
         }
