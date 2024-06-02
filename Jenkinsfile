@@ -118,9 +118,12 @@ pipeline {
 
         stage('Publish Docker Image') {
             steps {
-                script {
-                    sh 'docker tag django_project:latest ssilviu11/django_project:latest'
-                    sh 'docker push ssilviu11/django_project:latest'
+                withCredentials([usernamePassword(credentialsId: '47ef7b53-2a31-476f-9df5-85e1c72cf275', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                    script {
+                        sh 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
+                        // sh 'docker tag django_project:latest ssilviu11/django_project:latest'
+                        sh 'docker push ssilviu11/django_project:latest'
+                    }
                 }
             }
         }
