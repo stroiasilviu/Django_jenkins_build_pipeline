@@ -74,7 +74,7 @@ pipeline {
         //     }
         // }
 
-        stage('Build') {
+        stage('Build and Archive') {
             steps {
                 script {
                     // Package the application
@@ -111,7 +111,26 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    sh 'docker build -t django_image:${IMAGE_TAG} .'
+                    sh 'docker build -t django_project:latest'
+                }
+            }
+        }
+
+        stage('Publish Docker Image') {
+            steps {
+                script {
+                    sh 'docker tag django_project:latest ssilviu11/django_project:latest'
+                    sh 'docker push ssilviu11/django_project:latest'
+                }
+            }
+        }
+
+        stage('Deploy Container') {
+            steps {
+                script {
+                    sh 'docker run -d -p 4000:80 --name app ssilviu11/django_project:latest'
+                    sleep 10
+                    sh 'curl -k localhost:4000'
                 }
             }
         }
