@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        VENV_DIR = 'env'  // Directory for the virtual environment
+        VENV_DIR = 'venv'  // Directory for the virtual environment
     }
 
     stages {
@@ -11,9 +11,9 @@ pipeline {
                 script {
                     // Activate the virtual environment.
                     if (isUnix()) {
-                        sh './env/bin/activate'
+                        sh './venv/bin/activate'
                     } else {
-                        bat 'env\\Scripts\\activate'
+                        bat 'venv\\Scripts\\activate'
                     }
                     // Install dependencies using pip from the virtual environment
                     sh 'pip install -r requirements.txt'
@@ -25,7 +25,7 @@ pipeline {
             steps {
                 script {
                     // Apply database migrations using the python executable from the virtual environment
-                    sh './env/bin/python3 manage.py migrate'
+                    sh './venv/bin/python3 manage.py migrate'
                 }
             }
         }
@@ -34,11 +34,11 @@ pipeline {
             steps {
                 // script {
                 //     // Run Django tests using the python executable from the virtual environment
-                //     // sh '.env/bin/python manage.py test'
+                //     // sh '.venv/bin/python manage.py test'
                 // }
                 script {
                     // Start the Django development server in the background
-                    sh 'nohup ./env/bin/python manage.py runserver 0.0.0.0:8000 &'
+                    sh 'nohup ./venv/bin/python manage.py runserver 0.0.0.0:8000 &'
                     // sh './env/bin/python manage.py runserver 0.0.0.0:8000'
                     //sh 'nohup python manage.py runserver 0.0.0.0:8000 &'
 
@@ -58,7 +58,7 @@ pipeline {
         //     steps {
         //         script {
         //             // Run flake8 for linting using the flake8 executable from the virtual environment
-        //             sh './env/bin/flake8'
+        //             sh './venv/bin/flake8'
         //         }
         //     }
         // }
@@ -72,7 +72,7 @@ pipeline {
                         mkdir -p build
 
                         # Copy necessary files to the build directory
-                        cp -r ssm_project/ manage.py requirements.txt build/
+                        cp -r ssm_app/ ssm_project/ manage.py requirements.txt build/
 
                         # Create an archive of the build directory
                         tar -czf build.tar.gz -C build .
@@ -98,12 +98,3 @@ pipeline {
     }
 }
 
-
-//     post {
-//         always {
-//             // Archive the test results and coverage reports
-//             junit '**/test-results/*.xml'
-//             archiveArtifacts '**/dist/*.tar.gz'
-//         }
-//     }
-// }
