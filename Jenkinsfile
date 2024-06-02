@@ -133,7 +133,9 @@ pipeline {
                 script {
                     sh 'docker run -d -p 4000:80 --name app ssilviu11/django_project:latest'
                     sleep 10
-                    sh 'curl -k localhost:4000'
+                    sh 'docker ps -a' // List all containers for debugging purposes
+                    sh 'docker logs app' // Check logs of the running container for debugging
+                    sh 'curl -f http://localhost:4000 || exit 1
                 }
             }
         }
