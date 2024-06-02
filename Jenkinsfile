@@ -111,7 +111,7 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    sh 'docker build -t django_project:latest'
+                    sh 'docker build -t django_project:latest .'
                 }
             }
         }
