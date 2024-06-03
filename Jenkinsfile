@@ -131,7 +131,7 @@ pipeline {
         stage('Deploy Container') {
             steps {
                 script {
-                    sh 'docker run -d -p 4000:80 --name app ssilviu11/django_project:latest'
+                    sh 'docker run -d -p 4000:8000 --name app ssilviu11/django_project:latest'
                     sleep 10
                     sh 'docker ps -a' // List all containers for debugging purposes
                     sh 'docker logs app' // Check logs of the running container for debugging
