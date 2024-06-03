@@ -70,7 +70,7 @@ pipeline {
                         pwd
                         ls -altr
                         . venv/bin/activate
-                        venv/bin/flake8 .
+                        flake8 .
                     '''
                 }
             }
