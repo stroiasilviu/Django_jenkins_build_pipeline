@@ -68,7 +68,7 @@ pipeline {
                     //sh './venv/bin/flake8'
                     sh '''
                         pwd
-                        ll
+                        ls -altr
                         . venv/bin/activate
                         venv/bin/flake8 .
                     '''
