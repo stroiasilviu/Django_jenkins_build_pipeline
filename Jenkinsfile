@@ -178,10 +178,10 @@ pipeline {
     }
 
     post {
-        always {
-            // Clean up after build
+        // always {
+        //     // Clean up after build
         //    cleanWs()
-        }
+        // }
         success {
             echo 'Build completed successfully!'
         }
