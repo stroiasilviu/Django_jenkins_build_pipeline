@@ -66,13 +66,8 @@ pipeline {
                 script {
                     // Run flake8 for linting using the flake8 executable from the virtual environment
                     // sh './venv/bin/flake8'
-                    // sh 'flake8 . '
-                    
-                    sh ''' 
-                        ./static_scan.sh
-                        sleep 5
-                        cat static.output
-                    '''
+                    // sh 'flake8 . '                   
+                    sh './static_scan.sh'
                 }
             }
         }
