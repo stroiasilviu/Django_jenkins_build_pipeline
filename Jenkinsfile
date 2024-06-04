@@ -92,20 +92,6 @@ pipeline {
             }
         }
     
-        stage('Clean-up containers') {
-            steps {
-                script {
-                    sh '''
-                        if docker container ls -a | grep app ;
-                        then
-                            docker container stop app
-                            docker container rm app
-                        fi
-                    '''
-                }
-            }
-        }
-
         stage('Build Docker Image') {
             steps {
                 script {
@@ -126,9 +112,10 @@ pipeline {
             }
         }
 
-        stage('Deploy Container') {
+        stage('Deploy Container and Test') {
             steps {
                 script {
+                    // Ensure the container is started with the correct ports and check logs
                     sh 'docker run -d -p 4000:8000 --name app ssilviu11/django_project:latest'
                     sleep 10
                     sh 'docker ps -a' // List all containers for debugging purposes
@@ -137,7 +124,48 @@ pipeline {
                 }
             }
         }
-        
+
+        stage('Clean-up containers') {
+            steps {
+                script {
+                    // Clean up any existing containers
+                    sh '''
+                        if docker container ls -a | grep app ;
+                        then
+                            docker container stop app
+                            docker container rm app
+                        fi
+                    '''
+                    
+                    // Clean up dangling images
+                    sh 'docker image prune -f'
+                        
+                    // Remove specific image
+                    sh '''
+                        if docker image ls -a | grep ssilviu11/django_project ;
+                        then
+                            docker image rm ssilviu11/django_project:latest
+                        fi
+                    '''
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            // Clean up after build
+           cleanWs()
+        }
+        success {
+            echo 'Build completed successfully!'
+        }
+        failure {
+            echo 'Build failed!'
+        }
+    }
+}
+
         // stage('Publish Docker Image to EC2') {
         //     steps {
         //         script {
@@ -172,19 +200,3 @@ pipeline {
         //         }
         //     }
         // }
-    }
-
-    post {
-        // always {
-        //     // Clean up after build
-        //    cleanWs()
-        // }
-        success {
-            echo 'Build completed successfully!'
-        }
-        failure {
-            echo 'Build failed!'
-        }
-    }
-}
-
