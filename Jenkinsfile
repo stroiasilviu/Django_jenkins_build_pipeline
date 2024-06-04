@@ -125,7 +125,7 @@ pipeline {
             }
         }
 
-        stage('Clean-up containers') {
+        stage('Clean-up containers and images') {
             steps {
                 script {
                     // Clean up any existing containers
