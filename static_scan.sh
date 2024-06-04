@@ -6,5 +6,5 @@
 source venv/bin/activate
  
 flake8 . > static.output
-return 0
+exit 0
 
