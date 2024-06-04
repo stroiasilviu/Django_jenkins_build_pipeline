@@ -67,7 +67,7 @@ pipeline {
                     // Run flake8 for linting using the flake8 executable from the virtual environment
                     // sh './venv/bin/flake8'
                     // sh 'flake8 . '
-                    '''
+                    sh '''
                         . venv/bin/activate
                         flake8 . > static.output
                         return 0
