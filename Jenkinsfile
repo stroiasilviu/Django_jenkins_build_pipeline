@@ -68,7 +68,11 @@ pipeline {
                     // sh './venv/bin/flake8'
                     // sh 'flake8 . '
                     
-                    sh './static_scan.sh'
+                    sh ''' 
+                        ./static_scan.sh
+                        sleep 5
+                        cat static.output
+                    '''
                 }
             }
         }
