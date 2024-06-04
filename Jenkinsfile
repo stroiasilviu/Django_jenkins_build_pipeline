@@ -91,6 +91,7 @@ pipeline {
                 archiveArtifacts artifacts: 'build.tar.gz', followSymlinks: false
             }
         }
+
     
         stage('Build Docker Image') {
             steps {
