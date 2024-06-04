@@ -96,7 +96,15 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    sh 'docker build -t django_project:latest .'
+                    // Ensure the Dockerfile is in the correct location and build the Docker image
+                    sh '''
+                        if [ ! -f Dockerfile ]; then
+                            echo "Dockerfile not found!"
+                            exit 1
+                        fi
+                        docker build -t ssilviu11/django_project:latest .
+                        docker images
+                    '''
                 }
             }
         }
@@ -105,9 +113,11 @@ pipeline {
             steps {
                 withCredentials([usernamePassword(credentialsId: '47ef7b53-2a31-476f-9df5-85e1c72cf275', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
                     script {
-                        sh 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
-                        // sh 'docker tag django_project:latest ssilviu11/django_project:latest'
-                        sh 'docker push ssilviu11/django_project:latest'
+                        sh '''
+                            docker login -u $DOCKER_USER -p $DOCKER_PASS
+                            docker tag ssilviu11/django_project:latest ssilviu11/django_project:latest
+                            docker push ssilviu11/django_project:latest
+                        '''
                     }
                 }
             }
@@ -139,7 +149,7 @@ pipeline {
                     '''
                     
                     // Clean up dangling images
-                    sh 'docker image prune -f'
+                    // sh 'docker image prune -f'
                         
                     // Remove specific image
                     sh '''
