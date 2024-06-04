@@ -5,6 +5,6 @@
 
 source venv/bin/activate
  
-flake8 . > static.output
+flake8 . | tee static.output
 exit 0
 
