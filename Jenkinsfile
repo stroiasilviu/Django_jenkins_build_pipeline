@@ -3,13 +3,6 @@ pipeline {
 
     environment {
         VENV_DIR = 'venv'  // Directory for the virtual environment
-        // AWS_REGION = 'eu-west-1' // e.g., us-west-2
-        // AWS_ACCOUNT_ID = '471112656092' // Replace with your AWS account ID
-        // IMAGE_TAG = '1.0.0'
-        // ECR_REPOSITORY = 'your-ecr-repository-name' // Replace with your ECR repository name
-        // DOCKER_IMAGE = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPOSITORY}:${IMAGE_TAG}"
-        // EC2_INSTANCE_IP = 'your-ec2-instance-ip' // Replace with your EC2 instance IP
-        // SSH_KEY_PATH = '/path/to/your/private/key' // Replace with the path to your SSH private key
     }
 
     stages {
@@ -39,15 +32,9 @@ pipeline {
 
         stage('Run Tests') {
             steps {
-                // script {
-                //     // Run Django tests using the python executable from the virtual environment
-                //     // sh '.venv/bin/python manage.py test'
-                // }
                 script {
                     // Start the Django development server in the background
                     sh 'nohup ./venv/bin/python manage.py runserver 0.0.0.0:8000 &'
-                    // sh './env/bin/python manage.py runserver 0.0.0.0:8000'
-                    //sh 'nohup python manage.py runserver 0.0.0.0:8000 &'
 
                     // Wait for the server to start
                     sh 'sleep 10'
@@ -64,9 +51,7 @@ pipeline {
         stage('Static Analysis') {
             steps {
                 script {
-                    // Run flake8 for linting using the flake8 executable from the virtual environment
-                    // sh './venv/bin/flake8'
-                    // sh 'flake8 . '                   
+                    // Run flake8 for linting using the flake8 executable from the virtual environment                 
                     sh './static_scan.sh'
                 }
             }
@@ -176,38 +161,3 @@ pipeline {
         }
     }
 }
-
-        // stage('Publish Docker Image to EC2') {
-        //     steps {
-        //         script {
-        //             sh '''
-        //                 # Save Docker image to a tar file
-        //                 docker save -o django_image.tar django_image:${IMAGE_TAG}
-                        
-        //                 # Transfer the tar file to the EC2 instance
-        //                 scp -i ${SSH_KEY_PATH} django_image.tar ec2-user@${EC2_INSTANCE_IP}:/home/ec2-user/
-
-        //                 # SSH into the EC2 instance and load the Docker image
-        //                 ssh -i ${SSH_KEY_PATH} ec2-user@${EC2_INSTANCE_IP} << EOF
-        //                 docker load -i /home/ec2-user/django_image.tar
-        //                 EOF
-        //             '''
-        //         }
-        //     }
-        // }
-
-        // stage('Deploy to AWS EC2') {
-        //     steps {
-        //         script {
-        //             sh '''
-        //                 ssh -i ${SSH_KEY_PATH} ec2-user@${EC2_INSTANCE_IP} << EOF
-        //                 docker stop app || true
-        //                 docker rm app || true
-        //                 docker run -d -p 4000:80 --name app appimg:${IMAGE_TAG}
-        //                 EOF
-        //             '''
-        //             sleep 10
-        //             sh 'curl -k http://${EC2_INSTANCE_IP}:4000'
-        //         }
-        //     }
-        // }
