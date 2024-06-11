@@ -29,7 +29,8 @@ This project is a Django web application that utilizes a Jenkins pipeline for Co
 
 ## Step 3: Set Up Docker
 1. Create a Dockerfile in your project root to define the Docker image:
-Dockerfile:
+
+'''Dockerfile:
 ROM python:3.10.12
 WORKDIR /app
 COPY . /app
